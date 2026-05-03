@@ -85,7 +85,7 @@ export default function InputBox({ onSendMessage, onFileUpload, disabled }) {
               ref={fileInputRef}
               type="file"
               multiple
-              accept=".pdf,.txt,.doc,.docx"
+              accept=".pdf"
               onChange={handleFileSelect}
               className="hidden"
             />
@@ -122,7 +122,7 @@ export default function InputBox({ onSendMessage, onFileUpload, disabled }) {
       
       {/* Helper Text */}
       <div className="text-center mt-2 text-xs text-gray-500 dark:text-gray-400">
-        Supports PDF, TXT, and DOC files. Press Enter to send, Shift+Enter for new line.
+        Supports PDF files only. Press Enter to send, Shift+Enter for new line.
       </div>
     </div>
   )
