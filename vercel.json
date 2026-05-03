@@ -1,0 +1,12 @@
+{
+  "framework": "vite",
+  "installCommand": "npm install --prefix rag-ui",
+  "buildCommand": "npm run build --prefix rag-ui",
+  "outputDirectory": "rag-ui/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}
