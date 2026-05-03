@@ -1,3 +1,4 @@
+import ReactMarkdown from 'react-markdown'
 import SourceCard from './SourceCard'
 
 export default function ChatMessage({ message, onFeedback }) {
@@ -22,14 +23,20 @@ export default function ChatMessage({ message, onFeedback }) {
       
       {/* Message Content */}
       <div className={`max-w-3xl ${isUser ? 'items-end' : 'items-start'} ${isSystem ? 'w-full' : ''}`}>
-        <div className={`rounded-lg p-4 shadow-sm ${
+        <div className={`rounded-lg p-4 shadow-sm animate-fadeIn ${
           isUser 
-            ? 'bg-blue-500 text-white' 
+            ? 'bg-blue-500 text-white text-sm' 
             : isSystem
               ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-200 border border-blue-200 dark:border-blue-800'
-              : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-white'
+              : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-white border-l-4 border-l-blue-500 shadow-md'
         }`}>
-          <p className="whitespace-pre-wrap">{message.text}</p>
+          {isUser || isSystem ? (
+            <p className="whitespace-pre-wrap">{message.text}</p>
+          ) : (
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <ReactMarkdown>{message.text}</ReactMarkdown>
+            </div>
+          )}
         </div>
         
         {/* Source Attribution for AI messages */}
@@ -57,15 +64,16 @@ export default function ChatMessage({ message, onFeedback }) {
           </div>
         )}
         {!isUser && message.sources && message.sources.length > 0 && (
-          <div className="mt-2">
-            <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">Sources:</div>
-            <div className="space-y-1">
+          <div className="mt-3">
+            <div className="flex flex-wrap gap-2">
               {message.sources.map((source, index) => (
-                <SourceCard key={index} source={source} />
+                <span key={index} className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300">
+                  📄 Page {source.page}
+                </span>
               ))}
             </div>
             {message.chunksUsed > 0 && (
-              <div className="text-xs text-gray-500 mt-1">Chunks used: {message.chunksUsed}</div>
+              <div className="text-xs text-gray-500 mt-2">Chunks used: {message.chunksUsed}</div>
             )}
           </div>
         )}

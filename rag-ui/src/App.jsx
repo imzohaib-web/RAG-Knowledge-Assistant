@@ -39,7 +39,13 @@ function App() {
   const messages = activeConversation?.messages || []
 
   useEffect(() => {
-    localStorage.setItem(CHAT_KEY, JSON.stringify(conversations))
+    // Only save conversations that have at least one user message and one AI response
+    const validConversations = conversations.filter(conv => {
+      const userMessages = conv.messages.filter(m => m.type === 'user')
+      const aiMessages = conv.messages.filter(m => m.type === 'ai')
+      return userMessages.length > 0 && aiMessages.length > 0
+    })
+    localStorage.setItem(CHAT_KEY, JSON.stringify(validConversations))
   }, [conversations])
 
   useEffect(() => {
