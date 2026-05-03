@@ -1,6 +1,6 @@
 import ChatMessage from './ChatMessage'
 
-export default function ChatWindow({ messages, isTyping }) {
+export default function ChatWindow({ messages, isTyping, onFeedback }) {
   return (
     <div className="flex-1 overflow-y-auto bg-gray-50 dark:bg-gray-900 pb-32">
       <div className="max-w-4xl mx-auto p-4 space-y-4">
@@ -41,7 +41,7 @@ export default function ChatWindow({ messages, isTyping }) {
         ) : (
           <>
             {messages.map((message) => (
-              <ChatMessage key={message.id} message={message} />
+              <ChatMessage key={message.id} message={message} onFeedback={onFeedback} />
             ))}
             {isTyping && (
               <div className="flex items-start space-x-3">
@@ -49,6 +49,7 @@ export default function ChatWindow({ messages, isTyping }) {
                   <span className="text-white font-bold text-sm">AI</span>
                 </div>
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+                  <div className="text-xs text-gray-500 mb-2">AI is typing...</div>
                   <div className="flex space-x-1">
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
                     <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>

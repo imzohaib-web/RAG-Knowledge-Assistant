@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 
-export default function InputBox({ onSendMessage, onFileUpload, disabled }) {
+export default function InputBox({ onSendMessage, onFileUpload, disabled, isUploading }) {
   const [inputValue, setInputValue] = useState('')
   const [isDragging, setIsDragging] = useState(false)
   const fileInputRef = useRef(null)
@@ -122,7 +122,7 @@ export default function InputBox({ onSendMessage, onFileUpload, disabled }) {
       
       {/* Helper Text */}
       <div className="text-center mt-2 text-xs text-gray-500 dark:text-gray-400">
-        Supports PDF files only. Press Enter to send, Shift+Enter for new line.
+        {isUploading ? 'Uploading PDF...' : 'Supports PDF files only. Press Enter to send, Shift+Enter for new line.'}
       </div>
     </div>
   )

@@ -37,7 +37,13 @@ class LLMService:
         self.max_tokens = 1000
         self.temperature = 0.1  # Low temperature for more factual responses
     
-    def generate_answer(self, question: str, context_chunks: List[Dict[str, Any]]) -> str:
+    def generate_answer(
+        self,
+        question: str,
+        context_chunks: List[Dict[str, Any]],
+        model: str = None,
+        temperature: float = None
+    ) -> Dict[str, Any]:
         """
         Generate an answer based on the question and retrieved context chunks
         
@@ -69,7 +75,8 @@ class LLMService:
                 }
             ]
 
-            models_to_try = [self.model] + [m for m in self.fallback_models if m != self.model]
+            preferred_model = model or self.model
+            models_to_try = [preferred_model] + [m for m in self.fallback_models if m != preferred_model]
             last_error = None
 
             for model_name in models_to_try:
@@ -78,10 +85,10 @@ class LLMService:
                         messages=messages,
                         model=model_name,
                         max_tokens=self.max_tokens,
-                        temperature=self.temperature
+                        temperature=self.temperature if temperature is None else float(temperature)
                     )
                     answer = chat_completion.choices[0].message.content.strip()
-                    return answer
+                    return {"answer": answer, "model_used": model_name}
                 except Exception as model_error:
                     # Continue trying only for model availability/deprecation problems.
                     error_text = str(model_error).lower()
@@ -93,7 +100,7 @@ class LLMService:
             raise Exception(f"No available Groq model found. Last error: {last_error}")
             
         except Exception as e:
-            return f"Error generating answer: {str(e)}"
+            return {"answer": f"Error generating answer: {str(e)}", "model_used": model or self.model}
     
     def _create_context(self, context_chunks: List[Dict[str, Any]]) -> str:
         """

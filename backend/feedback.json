@@ -1,0 +1,10 @@
+[
+  {
+    "conversation_id": "conv-1777825846929",
+    "message_id": "a-1777826775419",
+    "rating": "down",
+    "question": null,
+    "answer": "The provided PDF discusses the concept of Cross Validation, a technique used to reduce variability in model performance. There are several types of Cross Validation methods, including:\n\n1. **Leave-One-Out Cross Validation (LOOCV)**: This method involves training the model on all examples except one, which is used for testing. This process is repeated for each example in the dataset.\n2. **Leave-P-Out Cross Validation (LOOPV)**: Similar to LOOCV, but instead of leaving one example out, P examples are left out for testing.\n3. **Holdout Method**: The dataset is divided into two parts: training data and testing data. The model is trained on the training data and evaluated on the testing data.\n4. **KFold Cross Validation**: The dataset is divided into k subsets, and the holdout method is repeated k times. Each subset is used as a test set once.\n5. **Stratified KFold Cross Validation**: A variation of KFold Cross Validation that ensures each subset is representative of the whole dataset, by maintaining the same class balance in each subset.\n6. **Time Series Cross Validation**: A method used for time series data, where each test set consists of a single observation, and the corresponding training set consists of observations that occurred prior to the test observation.\n\nThese methods help to evaluate the performance of a model and reduce overfitting by providing a more accurate estimate of the model's predictive performance. However, each method has its own limitations and disadvantages, such as computational expense, high variance, and potential bias.",
+    "timestamp": "2026-05-03T16:46:51.055Z"
+  }
+]

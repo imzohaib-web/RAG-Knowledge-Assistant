@@ -12,14 +12,24 @@ class TextChunker:
     
     def __init__(self):
         """Initialize the text chunker with specified parameters"""
-        # Chunk size: 500 words (approximately 2000 characters)
-        # Chunk overlap: 50 words (approximately 200 characters)
+        self.chunk_size_words = 500
+        self.chunk_overlap_words = 50
+        self._build_splitter()
+
+    def _build_splitter(self):
+        """Build splitter from current settings."""
         self.splitter = RecursiveCharacterTextSplitter(
-            chunk_size=2000,  # Approximate characters for 500 words
-            chunk_overlap=200,  # Approximate characters for 50 words
+            chunk_size=self.chunk_size_words * 4,
+            chunk_overlap=self.chunk_overlap_words * 4,
             length_function=len,
             separators=["\n\n", "\n", ". ", " ", ""]
         )
+
+    def set_chunking(self, chunk_size_words: int, chunk_overlap_words: int):
+        """Update chunking configuration at runtime."""
+        self.chunk_size_words = max(200, min(1000, int(chunk_size_words)))
+        self.chunk_overlap_words = max(0, min(200, int(chunk_overlap_words)))
+        self._build_splitter()
     
     def chunk_text(self, extracted_pages: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         """

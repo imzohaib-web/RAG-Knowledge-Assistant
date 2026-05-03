@@ -36,14 +36,14 @@ class ApiService {
   }
 
   // Send chat message to backend
-  async sendMessage(question) {
+  async sendMessage(payload) {
     try {
       const response = await fetch(`${this.baseURL}/chat`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ question }),
+        body: JSON.stringify(payload),
       });
 
       return await this.handleResponse(response);
@@ -76,6 +76,50 @@ class ApiService {
       console.error('Backend health check failed:', error);
       throw error;
     }
+  }
+
+  async saveHistory(entry) {
+    const response = await fetch(`${this.baseURL}/history`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    })
+    return this.handleResponse(response)
+  }
+
+  async getHistory() {
+    const response = await fetch(`${this.baseURL}/history/get`)
+    return this.handleResponse(response)
+  }
+
+  async deleteHistory(conversationId) {
+    const response = await fetch(`${this.baseURL}/history/delete/${conversationId}`, {
+      method: 'DELETE',
+    })
+    return this.handleResponse(response)
+  }
+
+  async saveFeedback(entry) {
+    const response = await fetch(`${this.baseURL}/feedback`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(entry),
+    })
+    return this.handleResponse(response)
+  }
+
+  async saveSettings(settings) {
+    const response = await fetch(`${this.baseURL}/settings`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(settings),
+    })
+    return this.handleResponse(response)
+  }
+
+  async getPDFInfo() {
+    const response = await fetch(`${this.baseURL}/pdf-info`)
+    return this.handleResponse(response)
   }
 }
 
