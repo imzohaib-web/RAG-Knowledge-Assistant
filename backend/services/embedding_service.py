@@ -4,7 +4,13 @@ Uses HuggingFace sentence-transformers to create text embeddings locally
 """
 
 import numpy as np
+import os
 from typing import List
+
+# Avoid TensorFlow/Keras import path for sentence-transformers on modern Python.
+os.environ.setdefault("USE_TF", "0")
+os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
+
 from sentence_transformers import SentenceTransformer
 
 
@@ -32,7 +38,7 @@ class EmbeddingService:
             # Filter out empty texts
             valid_texts = [text for text in texts if text and text.strip()]
             
-            if not valid_texts:
+            if len(valid_texts) == 0:
                 return []
             
             # Create embeddings using the HuggingFace model
@@ -63,7 +69,11 @@ class EmbeddingService:
             raise ValueError("Text cannot be empty")
         
         embeddings = self.create_embeddings([text])
-        return embeddings[0] if embeddings else np.array([])
+        # Fix array boolean context issue
+        if isinstance(embeddings, np.ndarray):
+            return embeddings[0] if embeddings.size > 0 else np.array([])
+        else:
+            return embeddings[0] if embeddings else np.array([])
     
     def get_embedding_dimension(self) -> int:
         """

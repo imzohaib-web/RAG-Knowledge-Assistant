@@ -33,19 +33,43 @@ class VectorStore:
             embeddings: List of numpy arrays containing embeddings
         """
         try:
-            if not chunks or not embeddings:
-                raise ValueError("No chunks or embeddings provided")
-            
-            # Convert embeddings to numpy array if needed
-            if isinstance(embeddings, list):
-                embeddings = np.array(embeddings)
+            if not chunks:
+                raise ValueError("No chunks provided")
+
+            # Convert embeddings to numpy array safely (works for lists and ndarrays)
+            if isinstance(embeddings, np.ndarray):
+                embedding_array = embeddings
+            else:
+                embedding_array = np.array(embeddings, dtype="float32")
+
+            if embedding_array.size == 0:
+                raise ValueError("No embeddings provided")
+
+            # Ensure embeddings are 2D: (n_vectors, embedding_dimension)
+            if embedding_array.ndim == 1:
+                embedding_array = embedding_array.reshape(1, -1)
+
+            if embedding_array.ndim != 2:
+                raise ValueError("Embeddings must be a 2D array")
+
+            if embedding_array.shape[0] != len(chunks):
+                raise ValueError(
+                    f"Chunks/embeddings count mismatch: {len(chunks)} chunks, "
+                    f"{embedding_array.shape[0]} embeddings"
+                )
+
+            if embedding_array.shape[1] != self.embedding_dimension:
+                raise ValueError(
+                    f"Embedding dimension mismatch: expected {self.embedding_dimension}, "
+                    f"got {embedding_array.shape[1]}"
+                )
             
             # Create FAISS index if it doesn't exist
             if self.index is None:
                 self.index = faiss.IndexFlatIP(self.embedding_dimension)  # Inner Product for cosine similarity
             
             # Add embeddings to index
-            self.index.add(embeddings.astype('float32'))
+            self.index.add(embedding_array.astype("float32"))
             
             # Store metadata
             for chunk in chunks:

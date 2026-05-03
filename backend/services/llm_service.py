@@ -28,7 +28,12 @@ class LLMService:
             self.client = Groq(api_key=self.api_key)
         
         # Model configuration
-        self.model = "llama3-8b-8192"  # Free tier model
+        # Primary model can be overridden via env var.
+        self.model = os.getenv("GROQ_MODEL", "llama-3.1-8b-instant")
+        self.fallback_models = [
+            "llama-3.3-70b-versatile",
+            "llama3-70b-8192"
+        ]
         self.max_tokens = 1000
         self.temperature = 0.1  # Low temperature for more factual responses
     
@@ -53,25 +58,39 @@ class LLMService:
             # Create the prompt with strict instructions to use only provided context
             prompt = self._create_prompt(question, context)
             
-            # Generate response using Groq
-            chat_completion = self.client.chat.completions.create(
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are a helpful AI assistant. Answer questions ONLY using the provided context. Do not use any external knowledge. If the context doesn't contain the answer, say 'I cannot answer this question based on the provided documents.'"
-                    },
-                    {
-                        "role": "user", 
-                        "content": prompt
-                    }
-                ],
-                model=self.model,
-                max_tokens=self.max_tokens,
-                temperature=self.temperature
-            )
-            
-            answer = chat_completion.choices[0].message.content.strip()
-            return answer
+            messages = [
+                {
+                    "role": "system",
+                    "content": "You are a helpful AI assistant. Answer questions ONLY using the provided context. Do not use any external knowledge. If the context doesn't contain the answer, say 'I cannot answer this question based on the provided documents.'"
+                },
+                {
+                    "role": "user",
+                    "content": prompt
+                }
+            ]
+
+            models_to_try = [self.model] + [m for m in self.fallback_models if m != self.model]
+            last_error = None
+
+            for model_name in models_to_try:
+                try:
+                    chat_completion = self.client.chat.completions.create(
+                        messages=messages,
+                        model=model_name,
+                        max_tokens=self.max_tokens,
+                        temperature=self.temperature
+                    )
+                    answer = chat_completion.choices[0].message.content.strip()
+                    return answer
+                except Exception as model_error:
+                    # Continue trying only for model availability/deprecation problems.
+                    error_text = str(model_error).lower()
+                    if ("model" in error_text and ("decommissioned" in error_text or "not found" in error_text or "invalid" in error_text)):
+                        last_error = model_error
+                        continue
+                    raise model_error
+
+            raise Exception(f"No available Groq model found. Last error: {last_error}")
             
         except Exception as e:
             return f"Error generating answer: {str(e)}"

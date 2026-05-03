@@ -66,14 +66,16 @@ async def upload_pdf(file: UploadFile = File(...)):
     - Create embeddings with HuggingFace
     - Store in FAISS vector database
     """
+    file_path = None
     try:
         # Validate file type
-        if not file.filename.endswith('.pdf'):
+        if not file.filename or not file.filename.lower().endswith(".pdf"):
             raise HTTPException(status_code=400, detail="Only PDF files are allowed")
         
         # Save uploaded file
         file_id = str(uuid.uuid4())
-        file_path = f"uploads/{file_id}_{file.filename}"
+        safe_filename = os.path.basename(file.filename)
+        file_path = f"uploads/{file_id}_{safe_filename}"
         
         with open(file_path, "wb") as buffer:
             content = await file.read()
@@ -81,28 +83,45 @@ async def upload_pdf(file: UploadFile = File(...)):
         
         # Extract text from PDF
         extracted_text = pdf_processor.extract_text(file_path)
+        if not extracted_text:
+            raise HTTPException(
+                status_code=400,
+                detail="No readable text found in this PDF. Try a text-based PDF."
+            )
         
         # Chunk the text
         chunks = text_chunker.chunk_text(extracted_text)
+        if not chunks:
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to create text chunks from the uploaded PDF."
+            )
         
         # Create embeddings for chunks
         chunk_texts = [chunk["text"] for chunk in chunks]
         embeddings = embedding_service.create_embeddings(chunk_texts)
+        if len(embeddings) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="Failed to generate embeddings from extracted PDF content."
+            )
         
         # Store in vector database
         vector_store.store_chunks(chunks, embeddings)
-        
-        # Clean up uploaded file
-        os.remove(file_path)
         
         return UploadResponse(
             message="PDF processed successfully",
             filename=file.filename,
             chunks_created=len(chunks)
         )
-        
+
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error processing PDF: {str(e)}")
+    finally:
+        if file_path and os.path.exists(file_path):
+            os.remove(file_path)
 
 @app.post("/chat", response_model=ChatResponse)
 async def chat(request: ChatRequest):
