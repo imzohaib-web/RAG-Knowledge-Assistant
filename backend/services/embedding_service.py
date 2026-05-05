@@ -1,32 +1,31 @@
 """
 Embedding Service
-Uses HuggingFace sentence-transformers to create text embeddings locally
+Uses HuggingFace Inference API for embeddings (no local models, free tier)
 """
 
 import numpy as np
 import os
+import requests
 from typing import List
-
-# Avoid TensorFlow/Keras import path for sentence-transformers on modern Python.
-os.environ.setdefault("USE_TF", "0")
-os.environ.setdefault("TRANSFORMERS_NO_TF", "1")
-
-from sentence_transformers import SentenceTransformer
 
 
 class EmbeddingService:
-    """Service for creating text embeddings using HuggingFace models"""
+    """Service for creating text embeddings using HuggingFace Inference API"""
     
     def __init__(self):
-        """Initialize the embedding service with lightweight model for free tier"""
-        # Using all-MiniLM-L12-v1 - smaller version, ~40MB vs 90MB
-        # Still good quality for RAG but uses 50% less memory
-        self.model = SentenceTransformer('all-MiniLM-L12-v1')
-        self.embedding_dimension = 384  # Dimension for all-MiniLM-L12-v1
+        """Initialize the embedding service with HuggingFace Inference API"""
+        self.api_url = "https://api-inference.huggingface.co/pipeline/feature-extraction"
+        # Get HF token from environment or use anonymous
+        self.hf_token = os.getenv("HUGGINGFACE_API_KEY", "")
+        self.model = "sentence-transformers/all-MiniLM-L6-v2"
+        self.embedding_dimension = 384
+        self.headers = {}
+        if self.hf_token:
+            self.headers = {"Authorization": f"Bearer {self.hf_token}"}
     
     def create_embeddings(self, texts: List[str]) -> List[np.ndarray]:
         """
-        Create embeddings for a list of texts
+        Create embeddings for a list of texts using HuggingFace Inference API
         
         Args:
             texts: List of text strings to embed
@@ -41,14 +40,29 @@ class EmbeddingService:
             if len(valid_texts) == 0:
                 return []
             
-            # Create embeddings using the HuggingFace model
-            embeddings = self.model.encode(
-                valid_texts,
-                batch_size=32,  # Process in batches for efficiency
-                show_progress_bar=False,
-                convert_to_numpy=True,
-                normalize_embeddings=True  # Normalize for better similarity search
+            # Call HuggingFace Inference API
+            payload = {"inputs": valid_texts, "options": {"use_gpu": False}}
+            response = requests.post(
+                self.api_url,
+                headers={**self.headers, "Content-Type": "application/json"},
+                json=payload,
+                timeout=30
             )
+            
+            if response.status_code != 200:
+                raise Exception(f"HF API error: {response.text}")
+            
+            embeddings_data = response.json()
+            
+            # Convert to numpy arrays and normalize
+            embeddings = []
+            for emb in embeddings_data:
+                arr = np.array(emb, dtype=np.float32)
+                # Normalize
+                norm = np.linalg.norm(arr)
+                if norm > 0:
+                    arr = arr / norm
+                embeddings.append(arr)
             
             return embeddings
             
