@@ -18,11 +18,11 @@ class EmbeddingService:
     """Service for creating text embeddings using HuggingFace models"""
     
     def __init__(self):
-        """Initialize the embedding service with all-MiniLM-L6-v2 model"""
-        # This model runs locally, no API key needed
-        # Model size: ~90MB, good for local use
-        self.model = SentenceTransformer('all-MiniLM-L6-v2')
-        self.embedding_dimension = 384  # Dimension for all-MiniLM-L6-v2
+        """Initialize the embedding service with lightweight model for free tier"""
+        # Using all-MiniLM-L12-v1 - smaller version, ~40MB vs 90MB
+        # Still good quality for RAG but uses 50% less memory
+        self.model = SentenceTransformer('all-MiniLM-L12-v1')
+        self.embedding_dimension = 384  # Dimension for all-MiniLM-L12-v1
     
     def create_embeddings(self, texts: List[str]) -> List[np.ndarray]:
         """
