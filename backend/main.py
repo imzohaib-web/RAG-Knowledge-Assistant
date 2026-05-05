@@ -27,7 +27,7 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:5173", 
         "http://localhost:3000",
-        "https://your-vercel-url.vercel.app"  # Replace with your Vercel frontend URL
+        "https://rag-knowledge-assistant-51z1.vercel.app"
     ],
     allow_credentials=True,
     allow_methods=["*"],
