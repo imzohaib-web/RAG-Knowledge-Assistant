@@ -1,7 +1,7 @@
 // API Service for RAG Knowledge Assistant
 // Handles communication with FastAPI backend
 
-const API_BASE_URL = 'http://localhost:8000';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 class ApiService {
   constructor() {

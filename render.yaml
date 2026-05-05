@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: rag-backend
+    runtime: python311
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        scope: runtime
+        value: ${GROQ_API_KEY}

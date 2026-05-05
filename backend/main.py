@@ -24,7 +24,11 @@ app = FastAPI(title="RAG Knowledge Assistant", version="1.0.0")
 # Configure CORS for React frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],  # React dev servers
+    allow_origins=[
+        "http://localhost:5173", 
+        "http://localhost:3000",
+        "https://your-vercel-url.vercel.app"  # Replace with your Vercel frontend URL
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

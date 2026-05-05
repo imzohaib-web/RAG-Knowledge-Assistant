@@ -1,0 +1,19 @@
+# Render doesn't need these files
+.git
+.gitignore
+node_modules
+venv
+__pycache__
+.env
+.env.local
+.DS_Store
+*.pyc
+.pytest_cache
+uploads/
+vector_store/
+history.json
+feedback.json
+settings.json
+rag-ui/
+start_system.bat
+README.md
