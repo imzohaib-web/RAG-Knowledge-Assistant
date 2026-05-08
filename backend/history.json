@@ -34,5 +34,14 @@
       "Page 1"
     ],
     "timestamp": "2026-05-08T04:59:06.814921"
+  },
+  {
+    "conversation_id": "conv-1778217005380",
+    "question": "what are my skills in this resume",
+    "answer": "Based on the provided context, your skills include:\n\n1. React.js\n2. Node.js\n3. JavaScript\n4. HTML5\n5. CSS3\n6. Bootstrap (Framework)\n7. Laravel\n8. Integrating REST APIs\n9. AI-driven features integration\n10. Python (from \"Programming for Everybody (Getting Started with Python)\" certification) \n\nThese skills are mentioned in the \"Top Skills Summary\" and \"Certifications\" sections of the context document.",
+    "source_pages": [
+      "Page 1"
+    ],
+    "timestamp": "2026-05-08T05:10:34.344328"
   }
 ]

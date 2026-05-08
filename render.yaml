@@ -8,3 +8,6 @@ services:
       - key: GROQ_API_KEY
         scope: runtime
         value: ${GROQ_API_KEY}
+      - key: HUGGINGFACE_API_KEY
+        scope: runtime
+        value: ${HUGGINGFACE_API_KEY}
