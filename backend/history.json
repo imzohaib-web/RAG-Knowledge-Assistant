@@ -16,5 +16,23 @@
       "Page 1"
     ],
     "timestamp": "2026-05-05T13:15:21.423186"
+  },
+  {
+    "conversation_id": "conv-1778216209433",
+    "question": "list my skills and achievemnt ans provide susgestions for better portfolio for a software engineer",
+    "answer": "Based on the provided context, your skills as a software engineer include:\n\n1. React.js\n2. Node.js\n3. JavaScript\n4. HTML5\n5. CSS3\n6. Bootstrap (Framework)\n7. Laravel\n8. Integrating REST APIs\n9. AI-driven features integration\n\nYour achievements include:\n\n1. Completing a 4-month internship as a FrontEnd Developer at Erudite Coaching Centre\n2. Building responsive web interfaces and improving UI/UX\n3. Collaborating on enhancing website performance using modern web technologies\n4. Developing projects including e-commerce platforms, AI-powered chatbots, and full-stack management systems\n\nTo improve your portfolio, consider adding:\n\n1. More details about your projects, such as their goals, technologies used, and outcomes\n2. Specific examples of how you applied your skills to achieve results\n3. Any relevant certifications or courses you've completed, such as \"AI For Everyone\" or \"Programming for Everybody (Getting Started with Python)\"\n4. A clear description of your experience and skills in a concise and easy-to-read format.",
+    "source_pages": [
+      "Page 1"
+    ],
+    "timestamp": "2026-05-08T04:57:36.849686"
+  },
+  {
+    "conversation_id": "conv-1778216209433",
+    "question": "what are my skills",
+    "answer": "Your skills include: \n- React.js\n- Node.js\n- JavaScript\n- HTML5\n- CSS3\n- Bootstrap (Framework)\n- Laravel\n- Integrating REST APIs\n- AI-driven features integration \n- FrontEnd Web Development.",
+    "source_pages": [
+      "Page 1"
+    ],
+    "timestamp": "2026-05-08T04:59:06.814921"
   }
 ]
