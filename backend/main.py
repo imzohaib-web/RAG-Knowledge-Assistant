@@ -1,4 +1,5 @@
 """
+everything is set
 RAG Knowledge Assistant Backend
 FastAPI application for PDF processing, embeddings, and chat functionality
 """
